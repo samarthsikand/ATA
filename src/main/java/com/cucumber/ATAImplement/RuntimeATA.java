@@ -92,8 +92,8 @@ public class RuntimeATA {
 				}
 				
 			} else if(tuple[0].equalsIgnoreCase("radiobutton")) {
-				//ele = driver.findElements(By.xpath("//input[@type='radio' and contains(@value,'"+tuple[2]+"')]"));
-				ele = driver.findElements(By.xpath("//*[contains(text(),'Milk')]/preceding::input[@type='radio']"));
+				ele = driver.findElements(By.xpath("//input[@type='radio' and contains(@value,'"+tuple[2]+"')]"));
+				//ele = driver.findElements(By.xpath("//*[contains(text(),'Milk')]/preceding::input[@type='radio']"));
 				if(!ele.isEmpty()) {
 					for(WebElement checkEle : ele) {
 						System.out.println("radio " + checkEle.getAttribute("name") + " value : " + checkEle.getAttribute("value"));
