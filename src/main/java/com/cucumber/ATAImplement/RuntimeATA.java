@@ -24,6 +24,7 @@ public class RuntimeATA {
 		tuples.add(new String[]{"textbox","click","1",""});
 		tuples.add(new String[]{"button","click","Search Buses",""});*/
 		tuples.add(new String[]{"radiobutton","select","Milk",""});
+		tuples.add(new String[]{"radiobutton group","select","Meals/Milk",""});
 		runTheTuples(tuples);
 	}
 	
@@ -104,6 +105,8 @@ public class RuntimeATA {
 					System.out.println("The radio button "+ tuple[2] + " could not be found.");
 				}
 				
+			} else if(tuple[0].equalsIgnoreCase("radiobutton group")) {
+				ele = driver.findElements(By.xpath("//legend[contains(text(),)]/following::input[@type='radio' and contains(@value,'"+tuple[2]+"')]"));
 			} else if(tuple[0].equalsIgnoreCase("image")) {
 				System.out.println("Sorry cannot interact with images");
 			} else {
