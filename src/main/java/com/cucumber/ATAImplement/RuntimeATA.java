@@ -17,14 +17,14 @@ public class RuntimeATA {
 	
 	public static void main(String args[]) {
 		List<String[]> tuples = new ArrayList<String[]>();
-		tuples.add(new String[]{"","goto","","http://echoecho.com/htmlforms10.htm"});
+		tuples.add(new String[]{"","goto","","http://html.cita.illinois.edu/nav/form/radio/index.php?example=6"});
 		/*tuples.add(new String[]{"textbox","enter","From","Delhi"});
 		tuples.add(new String[]{"textbox","enter","To","Jaipur"});
 		tuples.add(new String[]{"textbox","click","Date of Journey",""});
 		tuples.add(new String[]{"textbox","click","1",""});
 		tuples.add(new String[]{"button","click","Search Buses",""});*/
-		tuples.add(new String[]{"radiobutton","select","Milk",""});
-		tuples.add(new String[]{"radiobutton group","select","Meals/Milk",""});
+		tuples.add(new String[]{"radiobutton","select","in",""});
+		tuples.add(new String[]{"radiobutton group","select","Select pizza crust/deep",""});
 		runTheTuples(tuples);
 	}
 	
@@ -93,20 +93,25 @@ public class RuntimeATA {
 				}
 				
 			} else if(tuple[0].equalsIgnoreCase("radiobutton")) {
-				ele = driver.findElements(By.xpath("//input[@type='radio' and contains(@value,'"+tuple[2]+"')]"));
+				ele = driver.findElements(By.xpath("//input[@type='radio' and @value='"+tuple[2]+"']"));
 				//ele = driver.findElements(By.xpath("//*[contains(text(),'Milk')]/preceding::input[@type='radio']"));
 				if(!ele.isEmpty()) {
-					for(WebElement checkEle : ele) {
-						System.out.println("radio " + checkEle.getAttribute("name") + " value : " + checkEle.getAttribute("value"));
-					}
-					System.out.println("radio " + ele.get(0).getText());
-					//ele.get(0).click();
+					ele.get(0).click();
 				} else {
 					System.out.println("The radio button "+ tuple[2] + " could not be found.");
 				}
 				
 			} else if(tuple[0].equalsIgnoreCase("radiobutton group")) {
-				ele = driver.findElements(By.xpath("//legend[contains(text(),)]/following::input[@type='radio' and contains(@value,'"+tuple[2]+"')]"));
+				String[] listRadio = tuple[2].split("/");
+				ele = driver.findElements(By.xpath("//*[contains(text(),'"+listRadio[0]+"')]/following::input[@type='radio' and @value='"+listRadio[1]+"']"));
+				if(!ele.isEmpty()) {
+					ele.get(0).click();
+				} else {
+					System.out.println("The radio button group "+ listRadio[0] + " could not be found.");
+				}
+				
+			} else if(tuple[0].equalsIgnoreCase("checkbox")) {
+				ele = driver.findElements(By.xpath("//label[='"+tuple[1]+"']/preceding-sibling::input[@type='checkbox'] | //input[@type='checkbox' and @value='"+tuple[1]+"'"));
 			} else if(tuple[0].equalsIgnoreCase("image")) {
 				System.out.println("Sorry cannot interact with images");
 			} else {
