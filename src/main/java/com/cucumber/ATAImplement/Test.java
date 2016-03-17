@@ -1,21 +1,20 @@
 package com.cucumber.ATAImplement;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.collect.Lists;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class Test {
 	
 	public static void main(String args[]) {
-		String str = "This sample \"string\" is very \"nice\"";
-		Pattern p = Pattern.compile("\"([^\"]*)\"");
-		Matcher m = p.matcher(str);
-		while (m.find()) {
-		  System.out.println(m.group(1));
-		}
-		String tempStr = "\"label1\",\"label2\",";
-		System.out.println(tempStr.substring(0, tempStr.length()-1));
-		Lists.newArrayList();
+		WebDriver driver = new FirefoxDriver();
+		driver.get("https://www.freepdfconvert.com/pdf-word");
+		WebElement e = driver.findElement(By.xpath("//*[text()='Select file']"));
+		driver.findElement(By.id("inputFile")).sendKeys("C:/path/to/file.jpg");
+		e.click();
+		driver.switchTo().activeElement().sendKeys("C:\\Users\\samarth_sikand\\Downloads\\iris-casebase.txt");
+		//e.sendKeys("C:\\Users\\samarth_sikand\\Downloads\\iris-casebase.txt");
 	}
 }

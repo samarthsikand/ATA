@@ -3,11 +3,13 @@ package com.cucumber.ATAImplement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 
 public class RuntimeATA {
 	
@@ -17,14 +19,18 @@ public class RuntimeATA {
 	
 	public static void main(String args[]) {
 		List<String[]> tuples = new ArrayList<String[]>();
-		tuples.add(new String[]{"","goto","","http://html.cita.illinois.edu/nav/form/radio/index.php?example=6"});
+		tuples.add(new String[]{"","goto","","http://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_fileupload_get"});
 		/*tuples.add(new String[]{"textbox","enter","From","Delhi"});
 		tuples.add(new String[]{"textbox","enter","To","Jaipur"});
 		tuples.add(new String[]{"textbox","click","Date of Journey",""});
 		tuples.add(new String[]{"textbox","click","1",""});
 		tuples.add(new String[]{"button","click","Search Buses",""});*/
-		tuples.add(new String[]{"radiobutton","select","in",""});
-		tuples.add(new String[]{"radiobutton group","select","Select pizza crust/deep",""});
+		//tuples.add(new String[]{"radiobutton","select","in",""});
+		//tuples.add(new String[]{"radiobutton group","select","Select pizza crust/deep",""});
+		//tuples.add(new String[]{"multiselect","select","mushrooms,green peppers,onions",""});
+		//tuples.add(new String[]{"dropdown","select","Data Mining",""});
+		//tuples.add(new String[]{"alert","select","ok",""});
+		tuples.add(new String[]{"file select","select","D:/workspace/ATAImplement/src/main/java/com/cucumber/ATAImplement/Stack.java",""});
 		runTheTuples(tuples);
 	}
 	
@@ -103,7 +109,7 @@ public class RuntimeATA {
 				
 			} else if(tuple[0].equalsIgnoreCase("radiobutton group")) {
 				String[] listRadio = tuple[2].split("/");
-				ele = driver.findElements(By.xpath("//*[contains(text(),'"+listRadio[0]+"')]/following::input[@type='radio' and @value='"+listRadio[1]+"']"));
+				ele = driver.findElements(By.xpath("//*[text()='"+listRadio[0]+"']/following::input[@type='radio' and @value='"+listRadio[1]+"']"));
 				if(!ele.isEmpty()) {
 					ele.get(0).click();
 				} else {
@@ -111,7 +117,99 @@ public class RuntimeATA {
 				}
 				
 			} else if(tuple[0].equalsIgnoreCase("checkbox")) {
-				ele = driver.findElements(By.xpath("//label[='"+tuple[1]+"']/preceding-sibling::input[@type='checkbox'] | //input[@type='checkbox' and @value='"+tuple[1]+"'"));
+				ele = driver.findElements(By.xpath("//label[text()='"+tuple[1]+"']/preceding-sibling::input[@type='checkbox'] | //input[@type='checkbox' and @value='"+tuple[1]+"'"));
+				if(!ele.isEmpty()) {
+					ele.get(0).click();
+				} else {
+					System.out.println("The checkbox "+ tuple[1] + " could not be found.");
+				}
+				
+			} else if(tuple[0].equalsIgnoreCase("multiselect")) {
+				Select se = null;
+				String[] prefixSelect = tuple[2].split("/");
+				String[] listSelect = null;
+				if(prefixSelect.length > 1) {
+					listSelect = prefixSelect[1].split(",");
+				} else {
+					listSelect = prefixSelect[0].split(",");
+				}
+				
+				if(prefixSelect.length != 1) {
+					ele = driver.findElements(By.xpath("//*[text()='"+prefixSelect[0]+"']/following::select[@multiple]"));
+				} else {
+					ele = driver.findElements(By.xpath("//select[@multiple]"));
+				}
+				
+				if(!ele.isEmpty()) {
+					for(WebElement multiEle : ele) {
+						 se = new Select(multiEle);
+						 if(se.isMultiple()) {
+							 for(String str : listSelect) {
+								 se.selectByVisibleText(str);
+							 }
+							 break;
+						 }
+					}
+				} else {
+					System.out.println("The multiselct "+ tuple[1] + " could not be found.");
+				}
+				
+			} else if(tuple[0].equalsIgnoreCase("dropdown")) {
+				Select se = null;
+				String[] prefixSelect = tuple[2].split("/");
+				if(prefixSelect.length != 1) {
+					ele = driver.findElements(By.xpath("//*[text()='"+prefixSelect[0]+"']/following::select[1]"));
+				} else {
+					ele = driver.findElements(By.xpath("//select[1]"));
+				}
+				
+				if(!ele.isEmpty()) {
+					se = new Select(ele.get(0));
+					if(prefixSelect.length != 1) {
+						se.selectByVisibleText(prefixSelect[1]);
+					} else {
+						se.selectByVisibleText(prefixSelect[0]);
+					}
+				} else {
+					System.out.println("The select "+ prefixSelect[0] + " could not be found.");
+				}
+				
+			} else if(tuple[0].equalsIgnoreCase("alert")) {
+				Alert simpleAlert = driver.switchTo().alert();
+				if(tuple[2].equalsIgnoreCase("ok") || tuple[2].equalsIgnoreCase("accept")) {
+					simpleAlert.accept();
+				} else {
+					simpleAlert.dismiss();
+				}	
+				
+			} else if(tuple[0].equalsIgnoreCase("popup")) {
+				String mainWindowHandle = driver.getWindowHandle();
+				for (String activeHandle : driver.getWindowHandles()) {
+			        if (!activeHandle.equals(mainWindowHandle)) {
+			            driver.switchTo().window(activeHandle);
+			        }
+			    }
+				
+			} else if(tuple[0].equalsIgnoreCase("file select")) {
+				ele = driver.findElements(By.xpath("//input[@type='file']"));
+				WebElement element = driver.findElement(By.xpath("//input[@type='file']"));
+				element.sendKeys("C:/Users/samarth_sikand/Downloads/iris-casebase.txt");
+//				new Actions(driver).click(element).perform();
+//				driver.switchTo().activeElement().sendKeys("test.html");
+				if(!ele.isEmpty()) {
+					/*for(WebElement fileEle : ele) {
+						if(fileEle.getAttribute("id").equals("clientUpload")) {
+							System.out.println("Found it.."+fileEle.getText());
+							fileEle.click();
+							driver.switchTo().activeElement().sendKeys(tuple[2]);
+							break;
+						}
+					}*/
+					//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+					//ele.get(0).sendKeys(tuple[2]);
+				} else {
+					System.out.println("The file select "+ tuple[0] + " could not be found.");
+				}
 			} else if(tuple[0].equalsIgnoreCase("image")) {
 				System.out.println("Sorry cannot interact with images");
 			} else {
