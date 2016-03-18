@@ -13,35 +13,19 @@ import org.openqa.selenium.support.ui.Select;
 
 public class RuntimeATA {
 	
-	private static WebDriver driver = new FirefoxDriver();
+	private WebDriver driver = new FirefoxDriver();
 	private String URL;
-	private static List<WebElement> ele = new ArrayList<WebElement>();
+	private List<WebElement> ele = new ArrayList<WebElement>();
 	
-	public static void main(String args[]) {
-		List<String[]> tuples = new ArrayList<String[]>();
-		tuples.add(new String[]{"","goto","","http://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_fileupload_get"});
-		/*tuples.add(new String[]{"textbox","enter","From","Delhi"});
-		tuples.add(new String[]{"textbox","enter","To","Jaipur"});
-		tuples.add(new String[]{"textbox","click","Date of Journey",""});
-		tuples.add(new String[]{"textbox","click","1",""});
-		tuples.add(new String[]{"button","click","Search Buses",""});*/
-		//tuples.add(new String[]{"radiobutton","select","in",""});
-		//tuples.add(new String[]{"radiobutton group","select","Select pizza crust/deep",""});
-		//tuples.add(new String[]{"multiselect","select","mushrooms,green peppers,onions",""});
-		//tuples.add(new String[]{"dropdown","select","Data Mining",""});
-		//tuples.add(new String[]{"alert","select","ok",""});
-		tuples.add(new String[]{"file select","select","D:/workspace/ATAImplement/src/main/java/com/cucumber/ATAImplement/Stack.java",""});
-		runTheTuples(tuples);
-	}
 	
-	private static void runTheTuples(List<String[]> tuples) {
+	public void runTheTuples(List<String[]> tuples) {
 		for(String[] str : tuples) {
 			System.out.println(str[0]+" action, "+str[1]+" element, "+str[2]+" data");
 			executeTuple(str);
 		}
 	}
 	
-	private static void executeTuple(String[] tuple) {
+	public void executeTuple(String[] tuple) {
 		boolean exactMatched = false;
 		if(tuple[1].equalsIgnoreCase("enter")) {
 			exactMatched = false;
