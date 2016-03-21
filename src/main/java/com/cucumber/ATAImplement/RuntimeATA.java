@@ -194,10 +194,25 @@ public class RuntimeATA {
 				} else {
 					System.out.println("The file select "+ tuple[0] + " could not be found.");
 				}
+			} else if(tuple[0].equalsIgnoreCase("calendar")) {
+				String[] date = tuple[3].split(",");
+				System.out.println("Month: "+date[0]+" Day:"+date[1]);
+				ele = driver.findElements(By.xpath("//table/descendant::*[text()='"+date[0]+"']"));
+				System.out.println("The tables size: "+ele.size());
+				int visible = 0;
+				for(WebElement temp : ele) {
+					if(temp.isDisplayed()) {
+						break;
+					}
+					visible++;
+				}
+				WebElement element = ele.get(visible).findElement(By.xpath("./ancestor::table/descendant::td[text()='"+date[1]+"']"));
+				element.click();
+				
 			} else if(tuple[0].equalsIgnoreCase("image")) {
 				System.out.println("Sorry cannot interact with images");
 			} else {
-				System.out.println("Sorry Cannot interact with" + tuple[0] + " element");
+				System.out.println("Sorry Cannot interact with " + tuple[0] + " element");
 			}
 			
 		} else if(tuple[1].equalsIgnoreCase("goto")) {
