@@ -29,10 +29,10 @@ public class RuntimeATA {
 		boolean exactMatched = false;
 		if(tuple[1].equalsIgnoreCase("enter")) {
 			exactMatched = false;
-			ele = driver.findElements(By.xpath("//label[contains(text(),'"+tuple[2]+"')]/following::input[1] | " +
-											   "//label[contains(text(),'"+tuple[2]+"')]/descendant::input[1] | " +
-											   "//label[contains(text(),'"+tuple[2]+"')]/following::textarea[1] | "+
-											   "//label[contains(text(),'"+tuple[2]+"')]/descendant::textarea[1]"));
+			ele = driver.findElements(By.xpath("//*[contains(text(),'"+tuple[2]+"')]/following::input[1] | " +
+											   "//*[contains(text(),'"+tuple[2]+"')]/descendant::input[1] | " +
+											   "//*[contains(text(),'"+tuple[2]+"')]/following::textarea[1] | "+
+											   "//*[contains(text(),'"+tuple[2]+"')]/descendant::textarea[1]"));
 			System.out.println(ele.isEmpty()+" size: "+ele.size());
 			if(!ele.isEmpty() && ele.size() > 1) {
 				for(WebElement inputEle : ele) {
@@ -55,7 +55,7 @@ public class RuntimeATA {
 			exactMatched = false;
 			//ele = driver.findElements(By.xpath("//a[contains(text(),'"+tuple[1]+"')] | //button[contains(text(),'"+tuple[1]+"']"));
 			if(tuple[0].equalsIgnoreCase("button")) {
-				ele = driver.findElements(By.xpath("//button[contains(text(),'"+tuple[2]+"')]"));
+				ele = driver.findElements(By.xpath("//button[contains(text(),'"+tuple[2]+"')] | //input[contains(@value,'"+tuple[2]+"') and @type='submit']"));
 				if(!ele.isEmpty()) {
 					ele.get(0).click();
 				} else {

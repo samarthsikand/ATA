@@ -24,7 +24,7 @@ public class ATARunner {
 		try {
 			RuntimeATA driverATA = new RuntimeATA();
 			List<String[]> tuples = new ArrayList<String[]>();
-			CSVReader reader = new CSVReader(new FileReader("C:/Users/samarth_sikand/Desktop/ata.csv"));
+			CSVReader reader = new CSVReader(new FileReader("C:/Users/samarth_sikand/Desktop/mantisbt.csv"));
 			String [] nextLine;
 			
 			while ((nextLine = reader.readNext()) != null) {
