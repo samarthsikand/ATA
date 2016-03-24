@@ -30,7 +30,7 @@ public class ATARunner {
 			while ((nextLine = reader.readNext()) != null) {
 		        // nextLine[] is an array of values from the line
 		        System.out.println(nextLine[0] + " 2." + nextLine[1] + " 3." + nextLine[2] + " 4." + nextLine[3]);
-		        tuples.add(new String[]{nextLine[0],nextLine[1],nextLine[2],nextLine[3]});
+		        tuples.add(nextLine);
 		     }
 			
 //			tuples.add(new String[]{"","goto","","http://redbus.in"});
