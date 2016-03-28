@@ -21,6 +21,23 @@ public class Tree {
 		}
 	}
 	
+	public static class ANode<T> extends Node<T> {
+		public int value;
+		public List<ANode<T>> children;
+		
+		public ANode() {
+			this.value = 0;
+			this.children = new ArrayList<ANode<T>>();
+		}
+		
+		public ANode(T ele, ANode<T> node) {
+			this.value = 0;
+			this.data = ele;
+			this.parent = node;
+			this.children = new ArrayList<ANode<T>>();
+		}
+	}
+	
 	public static class StackNode<T> {
 		public String label;
 		public List<T> listInstances;
