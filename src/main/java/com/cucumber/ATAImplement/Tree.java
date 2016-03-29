@@ -23,6 +23,7 @@ public class Tree {
 	
 	public static class ANode<T> extends Node<T> {
 		public int value;
+		public ANode<T> parent;
 		public List<ANode<T>> children;
 		
 		public ANode() {
