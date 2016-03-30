@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.w3c.dom.ls.LSInput;
 
 import com.cucumber.ATAImplement.Tree.ANode;
 import com.cucumber.ATAImplement.Tree.Node;
@@ -91,11 +92,58 @@ public class AutomationATA {
 				tuple.target = tuple.target.substring(tuple.target.indexOf("="));
 			}
 			element = driver.findElement(By.xpath(tuple.target));
+			generateAnchors(element);
 		}
 	}
 	
-	public static void generateAnchors() {
+	public static void generateAnchors(WebElement ele) {
+		String label = "";
+		List<WebElement> otherLabels = null;
+		List<ANode<WebElement>> otherLabelTree = new ArrayList<ANode<WebElement>>();
+		List<ANode<WebElement>> pathFromTargetToRoot = null;
+		if(ele.getTagName().equals("a") || ele.getTagName().equals("button") || (ele.getTagName().equals("input") && ele.getAttribute("type").equals("submit"))) {
+			label = ele.getText();
+			otherLabels = driver.findElements(By.xpath("//*[text()='"+label+"']"));
+		} else {
+			label = ele.getTagName();
+			otherLabels = driver.findElements(By.xpath("//"+label+""));
+		}
+		ANode<WebElement> subtreeTargetNode = getInterestingSubtree(otherLabels,ele);
+		pathFromTargetToRoot = getPathFromTargetToRoot(ele);
+	}
+	
+	public static ANode<WebElement> getInterestingSubtree(List<WebElement> otherLabels, WebElement ele) {
+		mapWebElementToNode.get(ele).value = 1;
+		for(WebElement element : otherLabels) {
+			mapWebElementToNode.get(element).value = 1;
+		}
+		calculateValueOfNode(rootNode);
 		
+		ANode<WebElement> targetNode = mapWebElementToNode.get(ele);
+		while(targetNode.parent.value == 1) {
+			targetNode = targetNode.parent;
+		}
+		return targetNode;
+	}
+	
+	public static List<ANode<WebElement>> getPathFromTargetToRoot(WebElement ele) {
+		List<ANode<WebElement>> listFromTargetToNode = new ArrayList<ANode<WebElement>>();
+		ANode<WebElement> node = mapWebElementToNode.get(ele);
+		while(node.parent != null) {
+			listFromTargetToNode.add(node);
+			node = node.parent;
+		}
+		return listFromTargetToNode;
+	}
+	
+	public static int calculateValueOfNode(ANode<WebElement> rootNode) {
+		if(rootNode.children.size() == 0) {
+			return rootNode.value;
+		}
+		for(ANode<WebElement> childNode : rootNode.children) {
+			rootNode.value = rootNode.value + calculateValueOfNode(childNode);
+		}
+		return rootNode.value;
 	}
 	
 	public static void createChildNodes(WebElement ele,int i,ANode<WebElement> parentNode) {
