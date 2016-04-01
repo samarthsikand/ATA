@@ -103,7 +103,8 @@ public class AutomationATA {
 		Set<ANode<WebElement>> otherLabelTrees = new HashSet<ANode<WebElement>>();
 		ANode<WebElement> otherTreeNode = null;
 		ANode<WebElement> closestTree = null;
-		Set<ANode<WebElement>> pathFromTargetToRoot = null;
+		List<ANode<WebElement>> listPathFromTargetToRoot = null;
+		Set<ANode<WebElement>> setPathFromTargetToRoot = null;
 		if(ele.getTagName().equals("a") || ele.getTagName().equals("button") || (ele.getTagName().equals("input") && ele.getAttribute("type").equals("submit"))) {
 			label = ele.getText();
 			otherLabels = driver.findElements(By.xpath("//*[text()='"+label+"']"));
@@ -112,9 +113,11 @@ public class AutomationATA {
 			otherLabels = driver.findElements(By.xpath("//"+label+""));
 		}
 		ANode<WebElement> subtreeTargetNode = getInterestingSubtree(otherLabels,ele);
-		pathFromTargetToRoot = getPathFromTargetToRoot(ele);
+		listPathFromTargetToRoot = getPathFromTargetToRoot(ele);
+		setPathFromTargetToRoot.addAll(listPathFromTargetToRoot);
+		
 		for(WebElement otherEle : otherLabels) {
-			otherTreeNode = getOtherSubTree(otherEle,pathFromTargetToRoot);
+			otherTreeNode = getOtherSubTree(otherEle,setPathFromTargetToRoot);
 			if(!otherLabelTrees.contains(otherTreeNode)) {
 				otherLabelTrees.add(otherTreeNode);
 			}
@@ -126,7 +129,15 @@ public class AutomationATA {
 				listOfAnchors.add(distinctLabel);
 				return listOfAnchors;
 			}
-			closestTree = getClosestTree(subtreeTargetNode,otherLabelTrees);
+			closestTree = getClosestTree(subtreeTargetNode,otherLabelTrees,listPathFromTargetToRoot,setPathFromTargetToRoot);
+			Set<ANode<WebElement>> closestTreeList = new HashSet<ANode<WebElement>>();
+			closestTreeList.add(closestTree);
+			distinctLabel = getDistinctLabel(subtreeTargetNode,closestTreeList);
+			if(distinctLabel == null) {
+				return null;
+			}
+			listOfAnchors.add(distinctLabel);
+			subtreeTargetNode = mergeSubtrees(subtreeTargetNode,closestTree,otherLabelTrees);
 		}
 		
 		return null;
@@ -146,8 +157,8 @@ public class AutomationATA {
 		return targetNode;
 	}
 	
-	public static Set<ANode<WebElement>> getPathFromTargetToRoot(WebElement ele) {
-		Set<ANode<WebElement>> listFromTargetToNode = new HashSet<ANode<WebElement>>();
+	public static List<ANode<WebElement>> getPathFromTargetToRoot(WebElement ele) {
+		List<ANode<WebElement>> listFromTargetToNode = new ArrayList<ANode<WebElement>>();
 		ANode<WebElement> node = mapWebElementToNode.get(ele);
 		while(node.parent != null) {
 			listFromTargetToNode.add(node);
@@ -229,7 +240,42 @@ public class AutomationATA {
 		return labels;
 	}
 	
-	public static ANode<WebElement> getClosestTree(ANode<WebElement> subTreeTargetNode, Set<ANode<WebElement>> otherLabelTrees) {
+	public static ANode<WebElement> getClosestTree(ANode<WebElement> subTreeTargetNode, Set<ANode<WebElement>> otherLabelTrees, List<ANode<WebElement>> listFromTargetToRoot, Set<ANode<WebElement>> setOfTargetToRoot) {
+		ANode<WebElement> nodeEle = null;
+		ANode<WebElement> closestSubtreeNode = null;
+		int dist = 0;
+		int minDist = 9999999;
+		for(ANode<WebElement> node : otherLabelTrees) {
+			nodeEle = node;
+			dist=0;
+			while(nodeEle.parent != null || setOfTargetToRoot.contains(nodeEle.parent)) {
+				nodeEle = nodeEle.parent;
+			}
+			if(setOfTargetToRoot.contains(nodeEle.parent)) {
+				dist = listFromTargetToRoot.indexOf(nodeEle.parent);
+			}
+			if(dist < minDist) {
+				minDist = dist;
+				closestSubtreeNode = node;
+			}
+		}
+		return closestSubtreeNode;
+	}
+	
+	public static ANode<WebElement> mergeSubtrees(ANode<WebElement> subtreeTarget, ANode<WebElement> closestTree, Set<ANode<WebElement>> otherLabelTrees) {
+		List<ANode<WebElement>> pathOfTargetToRoot = getPathFromTargetToRoot(subtreeTarget.data);
+		List<ANode<WebElement>> pathOfClosestTreeToRoot = getPathFromTargetToRoot(closestTree.data);
+		Map<ANode<WebElement>,Set<ANode<WebElement>>> mapOtherNodeToPaths = new HashMap<ANode<WebElement>,Set<ANode<WebElement>>>();
+		
+		for(ANode<WebElement> node : otherLabelTrees) {
+			if(!mapOtherNodeToPaths.containsKey(node)) {
+				mapOtherNodeToPaths.put(node, new HashSet<ANode<WebElement>>());
+			}
+			Set<ANode<WebElement>> setOfNodes = new HashSet<ANode<WebElement>>();
+			setOfNodes.addAll(getPathFromTargetToRoot(node.data));
+			mapOtherNodeToPaths.put(node, setOfNodes);
+		}
+		
 		return new ANode<WebElement>();
 	}
 	
