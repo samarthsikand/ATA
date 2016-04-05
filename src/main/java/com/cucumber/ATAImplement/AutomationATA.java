@@ -32,7 +32,7 @@ public class AutomationATA {
 		String strLine;
 		driver = new FirefoxDriver();
 		driver.manage().window().maximize();
-		File file = new File("C:/Users/samarth_sikand/Desktop/bell.html");
+		File file = new File("C:/Users/hp/Desktop/nationwide.html");
 		try {
 			Document doc = Jsoup.parse(file,"UTF-8");
 			List<Tuple> listOfTuples = new ArrayList<Tuple>();
@@ -42,10 +42,7 @@ public class AutomationATA {
 			 */
 			driver.navigate().to("http://nationwide.co.uk");
 			driver.findElement(By.xpath("//a[@class='iconLink close']")).click();
-			driver.findElement(By.xpath("//a[text()='ISAs']")).click();
-//			WebDriverWait wait = new WebDriverWait(driver, 20);
-//			WebElement linkElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(),'ISA')]")));
-//			linkElement.click();
+			driver.findElements(By.xpath("//a[contains(text(),'ISAs')]")).get(7).click();
 			//driver.findElement(By.xpath("//a[contains(text(),'Enterprise')]")).click();
 			Elements content = doc.getElementsByTag("tr");
 			Elements children = doc.children();
@@ -243,8 +240,8 @@ public class AutomationATA {
 		if(listLabels.size() != 0) {
 			for(WebElement ele : listLabels) {
 				System.out.println(ele.getTagName() +": "+ele.getText());
-				if(!labels.contains(ele.getText())) {
-					labels.add(ele.getText());
+				if(!labels.contains(ele.getText().trim())) {
+					labels.add(ele.getText().trim());
 				}
 			}
 		}
@@ -253,8 +250,8 @@ public class AutomationATA {
 		if(listLabels.size() != 0) {
 			for(WebElement ele : listLabels) {
 				System.out.println(ele.getTagName()+": "+ele.getText());
-				if(!labels.contains(ele.getText()) && !ele.getText().equals("")) {
-					labels.add(ele.getText());
+				if(!labels.contains(ele.getText()) && !ele.getText().trim().equals("")) {
+					labels.add(ele.getText().trim());
 				}
 			}
 		}
@@ -263,8 +260,8 @@ public class AutomationATA {
 		if(listLabels.size() != 0) {
 			for(WebElement ele : listLabels) {
 				System.out.println(ele.getTagName()+": "+ele.getText());
-				if(!labels.contains(ele.getText()) && !ele.getText().equals("")) {
-					labels.add(ele.getText());
+				if(!labels.contains(ele.getText()) && !ele.getText().trim().equals("")) {
+					labels.add(ele.getText().trim());
 				}
 			}
 		}
