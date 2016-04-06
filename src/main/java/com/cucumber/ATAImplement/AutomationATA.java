@@ -23,50 +23,58 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.cucumber.ATAImplement.Tree.ANode;
 
 public class AutomationATA {
-	public static Map<WebElement,ANode<WebElement>> mapWebElementToNode = new HashMap<WebElement,ANode<WebElement>>();
-	public static WebDriver driver = null;
-	public static String URL = "";
-	public static ANode<WebElement> rootNode = null;
+	public Map<WebElement,ANode<WebElement>> mapWebElementToNode = new HashMap<WebElement,ANode<WebElement>>();
+	public WebDriver driver = null;
+	public String URL = "";
+	public ANode<WebElement> rootNode = null;
 	
-	public static void main(String args[]) {
+	/*public void main(String args[]) {
 		String strLine;
 		driver = new FirefoxDriver();
 		driver.manage().window().maximize();
-		File file = new File("C:/Users/hp/Desktop/nationwide.html");
+		File file = new File("C:/Users/samarth_sikand/Desktop/nationwide.html");
 		try {
 			Document doc = Jsoup.parse(file,"UTF-8");
 			List<Tuple> listOfTuples = new ArrayList<Tuple>();
-			/*
+			
 			 * driver.navigate().to("http://bell.ca");
 			 * driver.findElement(By.xpath("//button[text()='Save my selections']")).click();
-			 */
+			 
 			driver.navigate().to("http://nationwide.co.uk");
-			driver.findElement(By.xpath("//a[@class='iconLink close']")).click();
-			driver.findElements(By.xpath("//a[contains(text(),'ISAs')]")).get(7).click();
+//			driver.findElement(By.xpath("//a[@class='iconLink close']")).click();
+//			driver.findElements(By.xpath("//a[contains(text(),'ISAs')]")).get(6).click();
 			//driver.findElement(By.xpath("//a[contains(text(),'Enterprise')]")).click();
-			Elements content = doc.getElementsByTag("tr");
+			Elements tbody = doc.getElementsByTag("tbody");
+			Elements content = tbody.get(0).getElementsByTag("tr");
 			Elements children = doc.children();
 			for(Element ele : content) {
 				Elements td = ele.children();
 				String str[] = new String[3];
 				int i = 0;
-				for(Element childTd : td) {
-					str[i] = childTd.text();
-					i++;
-				}
-				listOfTuples.add(new Tuple(str[0],str[1],str[2]));
-				System.out.println(str[0]+ " "+str[1]+" "+str[2]);
+				if(!td.get(0).text().equals("open")) {
+					for(Element childTd : td) {
+						str[i] = childTd.text();
+						i++;
+					}
+					listOfTuples.add(new Tuple(str[0],str[1],str[2]));
+					System.out.println(str[0]+ " "+str[1]+" "+str[2]);
+				}	
 			}
 			
 			for(Tuple tuple : listOfTuples) {
 				executeTuple(tuple);
+				if(tuple.action.equals("clickAndWait") || tuple.action.equals("click")) {
+					driver.findElement(By.xpath(tuple.target)).click();
+				} else if(tuple.action.equals("type")) {
+					driver.findElement(By.xpath(tuple.target)).sendKeys(tuple.data);
+				}
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
-	public static void printAllChildren(ANode<Element> root, int i) {
+	public void printAllChildren(ANode<Element> root, int i) {
 		Elements rows = root.data.children();
 		for(Element columns : rows) {
 			if(!(columns.tagName().equalsIgnoreCase("script") || columns.tagName().equalsIgnoreCase("style") || columns.tagName().equalsIgnoreCase("meta"))) {
@@ -80,7 +88,7 @@ public class AutomationATA {
 		}
 	}
 	
-	public static void checkIfURLChanged() {
+	public void checkIfURLChanged() {
 		if(!URL.equals(driver.getCurrentUrl())) {
 			List<WebElement> listOfElement = driver.findElements(By.xpath("//html"));
 			System.out.println("URL is not the same");
@@ -102,12 +110,12 @@ public class AutomationATA {
 		}
 	}
 	
-	public static void executeTuple(Tuple tuple) {
+	public void executeTuple(Tuple tuple) {
 		checkIfURLChanged();
 		WebElement element = null;
 		
 		if(!tuple.action.equalsIgnoreCase("open")) {
-			if(tuple.target.contains("=")) {
+			if(tuple.target.contains("xpath=")) {
 				tuple.target = tuple.target.substring(tuple.target.indexOf("=")+1);
 			}
 			element = driver.findElement(By.xpath(tuple.target));
@@ -119,7 +127,7 @@ public class AutomationATA {
 		}
 	}
 	
-	public static List<String> generateAnchors(WebElement ele) {
+	public List<String> generateAnchors(WebElement ele) {
 		String label = "";
 		List<WebElement> otherLabels = null;
 		List<String> listOfAnchors = new ArrayList<String>();
@@ -175,7 +183,7 @@ public class AutomationATA {
 		return null;
 	}
 	
-	public static ANode<WebElement> getInterestingSubtree(List<WebElement> otherLabels, WebElement ele) {
+	public ANode<WebElement> getInterestingSubtree(List<WebElement> otherLabels, WebElement ele) {
 		mapWebElementToNode.get(ele).value = 1;
 		for(WebElement element : otherLabels) {
 			mapWebElementToNode.get(element).value = 1;
@@ -189,7 +197,7 @@ public class AutomationATA {
 		return targetNode;
 	}
 	
-	public static List<ANode<WebElement>> getPathFromTargetToRoot(WebElement ele) {
+	public List<ANode<WebElement>> getPathFromTargetToRoot(WebElement ele) {
 		List<ANode<WebElement>> listFromTargetToNode = new ArrayList<ANode<WebElement>>();
 		ANode<WebElement> node = mapWebElementToNode.get(ele);
 		while(node.parent != null) {
@@ -199,7 +207,7 @@ public class AutomationATA {
 		return listFromTargetToNode;
 	}
 	
-	public static ANode<WebElement> getOtherSubTree(WebElement element, Set<ANode<WebElement>> pathFromTargetToRoot) {
+	public ANode<WebElement> getOtherSubTree(WebElement element, Set<ANode<WebElement>> pathFromTargetToRoot) {
 		ANode<WebElement> otherNode = mapWebElementToNode.get(element);
 		while(otherNode.parent != null && !pathFromTargetToRoot.contains(otherNode.parent)) {
 			otherNode = otherNode.parent;
@@ -207,7 +215,7 @@ public class AutomationATA {
 		return otherNode;
 	}
 	
-	public static int calculateValueOfNode(ANode<WebElement> rootNode) {
+	public int calculateValueOfNode(ANode<WebElement> rootNode) {
 		if(rootNode.children.size() == 0) {
 			return rootNode.value;
 		}
@@ -217,7 +225,7 @@ public class AutomationATA {
 		return rootNode.value;
 	}
 	
-	public static String getDistinctLabel(ANode<WebElement> subtreeTargetNode, Set<ANode<WebElement>> otherLabelTrees) {
+	public String getDistinctLabel(ANode<WebElement> subtreeTargetNode, Set<ANode<WebElement>> otherLabelTrees) {
 		Set<String> listOfLabelsTargetTree = new HashSet<String>();
 		System.out.println("Labels for target tree:");
 		List<String> targetSubtreeLabels = getLabelsOfTree(subtreeTargetNode);
@@ -234,7 +242,7 @@ public class AutomationATA {
 		return null;
 	}
 	
-	public static List<String> getLabelsOfTree(ANode<WebElement> subTreeTargetNode) {
+	public List<String> getLabelsOfTree(ANode<WebElement> subTreeTargetNode) {
 		List<String> labels = new ArrayList<String>();
 		List<WebElement> listLabels = subTreeTargetNode.data.findElements(By.xpath("./descendant::h1 | ./descendant::h2 | ./descendant::h3 | ./descendant::h3 | ./descendant::h4"));
 		if(listLabels.size() != 0) {
@@ -246,7 +254,7 @@ public class AutomationATA {
 			}
 		}
 		
-		listLabels = subTreeTargetNode.data.findElements(By.xpath("./descendant::label | ./descendant::td"));
+		listLabels = subTreeTargetNode.data.findElements(By.xpath("./descendant::label | ./descendant::td | ./descendant::a | ./descendant::button"));
 		if(listLabels.size() != 0) {
 			for(WebElement ele : listLabels) {
 				System.out.println(ele.getTagName()+": "+ele.getText());
@@ -269,7 +277,7 @@ public class AutomationATA {
 		return labels;
 	}
 	
-	public static List<String> getLabelsOfTree(Set<ANode<WebElement>> otherLabelTrees) {
+	public List<String> getLabelsOfTree(Set<ANode<WebElement>> otherLabelTrees) {
 		List<String> labels = new ArrayList<String>();
 		for(ANode<WebElement> nodeEle : otherLabelTrees) {
 			labels.addAll(getLabelsOfTree(nodeEle));
@@ -277,7 +285,7 @@ public class AutomationATA {
 		return labels;
 	}
 	
-	public static ANode<WebElement> getClosestTree(ANode<WebElement> subTreeTargetNode, Set<ANode<WebElement>> otherLabelTrees, List<ANode<WebElement>> listFromTargetToRoot, Set<ANode<WebElement>> setOfTargetToRoot) {
+	public ANode<WebElement> getClosestTree(ANode<WebElement> subTreeTargetNode, Set<ANode<WebElement>> otherLabelTrees, List<ANode<WebElement>> listFromTargetToRoot, Set<ANode<WebElement>> setOfTargetToRoot) {
 		ANode<WebElement> nodeEle = null;
 		ANode<WebElement> closestSubtreeNode = null;
 		int dist = 0;
@@ -299,7 +307,7 @@ public class AutomationATA {
 		return closestSubtreeNode;
 	}
 	
-	public static List<ANode<WebElement>> getLowestCommonAncestorPath(List<ANode<WebElement>> pathOfTargetToRoot, List<ANode<WebElement>> pathOfClosestTreeToRoot) {
+	public List<ANode<WebElement>> getLowestCommonAncestorPath(List<ANode<WebElement>> pathOfTargetToRoot, List<ANode<WebElement>> pathOfClosestTreeToRoot) {
 		int i = 0;
 		int lca = 0;
 		List<ANode<WebElement>> pathOfLowestCommonAncestor = new ArrayList<ANode<WebElement>>();
@@ -319,7 +327,7 @@ public class AutomationATA {
 		return pathOfLowestCommonAncestor;
 	}
 	
-	public static ANode<WebElement> mergeSubtrees(ANode<WebElement> subtreeTarget, ANode<WebElement> closestTree, Set<ANode<WebElement>> otherLabelTrees) {
+	public ANode<WebElement> mergeSubtrees(ANode<WebElement> subtreeTarget, ANode<WebElement> closestTree, Set<ANode<WebElement>> otherLabelTrees) {
 		int nodeIndex = 0;
 		List<ANode<WebElement>> pathOfTargetToRoot = getPathFromTargetToRoot(subtreeTarget.data);
 		List<ANode<WebElement>> pathOfClosestTreeToRoot = getPathFromTargetToRoot(closestTree.data);
@@ -348,7 +356,7 @@ public class AutomationATA {
 		return null;
 	}
 	
-	public static void createChildNodes(WebElement ele,int i,ANode<WebElement> parentNode) {
+	public void createChildNodes(WebElement ele,int i,ANode<WebElement> parentNode) {
 		int j = 0;
 		List<WebElement> listChild = ele.findElements(By.xpath("*"));
 		//System.out.println(listChild.size());

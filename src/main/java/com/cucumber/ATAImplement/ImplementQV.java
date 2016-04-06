@@ -26,14 +26,12 @@ public class ImplementQV {
 	Node<WebElement> rootNode = null;
 	List<String> labels = new ArrayList<String>();
 		 navigateToWebsite();
-		 labels = Lists.newArrayList("SMALL BUSINESS","PERSONAL");
-		 clickButton(labels);
-		 labels = Lists.newArrayList("Learn more","Business TV");
+		 labels = Lists.newArrayList("Search Buses","From");
 		 clickButton(labels);
 	}
 	 public static void navigateToWebsite() {
 		 driver.manage().window().maximize();
-		 driver.navigate().to("http://www.bell.ca");
+		 driver.navigate().to("http://http://redbus.in");
 	 }
 
 	 public static void clickButton(List<String> labels) {
