@@ -34,7 +34,6 @@ public class ATARunner {
 		        tuples.add(nextLine);
 		     }
 			
-//			tuples.add(new String[]{"","goto","","http://redbus.in"});
 			/*tuples.add(new String[]{"textbox","enter","From","Delhi"});
 			tuples.add(new String[]{"textbox","enter","To","Jaipur"});
 			tuples.add(new String[]{"textbox","click","Date of Journey",""});
