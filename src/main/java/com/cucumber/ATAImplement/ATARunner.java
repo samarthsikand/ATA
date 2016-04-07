@@ -9,6 +9,7 @@ import com.opencsv.CSVReader;
 public class ATARunner {
 	
 	private static String featureFilePath = "src/main/java/com/cucumber/ATAImplement/ata.feature";
+	private static String csvFilePath = "C:/Users/samarth_sikand/Desktop/mantisbt.csv";
 	
 	public static void main(String args[]) {
 //		runATA();
@@ -24,7 +25,7 @@ public class ATARunner {
 		try {
 			RuntimeATA driverATA = new RuntimeATA();
 			List<String[]> tuples = new ArrayList<String[]>();
-			CSVReader reader = new CSVReader(new FileReader("C:/Users/samarth_sikand/Desktop/mantisbt.csv"));
+			CSVReader reader = new CSVReader(new FileReader(csvFilePath));
 			String [] nextLine;
 			
 			while ((nextLine = reader.readNext()) != null) {
