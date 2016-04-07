@@ -28,52 +28,6 @@ public class AutomationATA {
 	public String URL = "";
 	public ANode<WebElement> rootNode = null;
 	
-	/*public void main(String args[]) {
-		String strLine;
-		driver = new FirefoxDriver();
-		driver.manage().window().maximize();
-		File file = new File("C:/Users/samarth_sikand/Desktop/nationwide.html");
-		try {
-			Document doc = Jsoup.parse(file,"UTF-8");
-			List<Tuple> listOfTuples = new ArrayList<Tuple>();
-			
-			 * driver.navigate().to("http://bell.ca");
-			 * driver.findElement(By.xpath("//button[text()='Save my selections']")).click();
-			 
-			driver.navigate().to("http://nationwide.co.uk");
-//			driver.findElement(By.xpath("//a[@class='iconLink close']")).click();
-//			driver.findElements(By.xpath("//a[contains(text(),'ISAs')]")).get(6).click();
-			//driver.findElement(By.xpath("//a[contains(text(),'Enterprise')]")).click();
-			Elements tbody = doc.getElementsByTag("tbody");
-			Elements content = tbody.get(0).getElementsByTag("tr");
-			Elements children = doc.children();
-			for(Element ele : content) {
-				Elements td = ele.children();
-				String str[] = new String[3];
-				int i = 0;
-				if(!td.get(0).text().equals("open")) {
-					for(Element childTd : td) {
-						str[i] = childTd.text();
-						i++;
-					}
-					listOfTuples.add(new Tuple(str[0],str[1],str[2]));
-					System.out.println(str[0]+ " "+str[1]+" "+str[2]);
-				}	
-			}
-			
-			for(Tuple tuple : listOfTuples) {
-				executeTuple(tuple);
-				if(tuple.action.equals("clickAndWait") || tuple.action.equals("click")) {
-					driver.findElement(By.xpath(tuple.target)).click();
-				} else if(tuple.action.equals("type")) {
-					driver.findElement(By.xpath(tuple.target)).sendKeys(tuple.data);
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}*/
-	
 	public void printAllChildren(ANode<Element> root, int i) {
 		Elements rows = root.data.children();
 		for(Element columns : rows) {
